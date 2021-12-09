@@ -1,3 +1,7 @@
+# Team members
+Shubham Talbar
+Nikunj Baid
+
 # DeepCT : Context-Aware Term Importance Estimation For First Stage Retrieval
 Reference paper : 
 - arXiv paper "Context-Aware Sentence/Passage Term Weighting For First Stage Retrieval" [arXiv](https://arxiv.org/abs/1910.10687), 2019
