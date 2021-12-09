@@ -6,6 +6,13 @@ Term frequency is a common method for identifying the importance of a term in a 
 
 - DeepCT is a framwork for sentence/passage term weighting. When applied to **passages**, DeepCT-Index produces term weights that can be stored in an ordinary inverted index for passage retrieval. When applied to **query** text, DeepCT-Query generates a weighted bag-of-words query that emphasizes essential terms in the query.
 
+## Environment setup
+
+conda create -n deepCTEnv python=3.7.1 anaconda
+conda activate deepCTEnv
+conda install tensorflow=1.15.0
+
+
 ## DATA 1:DeepCT Retrieved Results (Initial Rankings)
 
 We released the top 1000 documents retrieved by DeepCT for the MS MARCO Passage Ranking dev/eval queries. You can use these as your initial document ranking for downstream re-ranking. The ranking files can be downloaded from [here](http://boston.lti.cs.cmu.edu/appendices/arXiv2019-DeepCT-Zhuyun-Dai/msmarco_rankings/).
@@ -145,6 +152,13 @@ optional arguments:
   -h, --help            show this help message and exit
   --output_format {tsv,json}
  ```
+
+## command to execute for the above step
+python scripts/bert_term_sample_to_json.py  --output_format tsv  
+/cs/student/nikunjbaid/cs293s/final_project/DeepCT/data/marco/collection.tsv.1 
+/cs/student/nikunjbaid/cs293s/final_project/DeepCT/predictions/marco/collection_pred_1/predict.tf_record 
+/cs/student/nikunjbaid/cs293s/final_project/DeepCT/output/marco/output 100
+
  
  The output files can be feed to indexing tools such as Anserini (used in paper), Indri, or Lucene to build index and run retrieval.
  Go to the original repository of [Anserini](https://github.com/castorini/anserini)
