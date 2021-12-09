@@ -1,21 +1,10 @@
-# DeepCT and HDCT: Context-Aware Term Importance Estimation For First Stage Retrieval
-This repository contains code for two of our papers: 
-- arXiv paper "Context-Aware Sentence/Passage Term Importance Estimation For First Stage Retrieval" [arXiv](https://arxiv.org/abs/1910.10687), 2019
-- The WebConf2020 paper "Context-Aware Document Term Weighting for Ad-Hoc Search" [pdf](http://www.cs.cmu.edu/~zhuyund/papers/TheWebConf_2020_Dai.pdf), 2020
-
-*Feb 19, 2019*: Checkout our new WebConf2020 paper ["Context-Aware Document Term Weighting for Ad-Hoc Search" ](http://www.cs.cmu.edu/~zhuyund/papers/TheWebConf_2020_Dai.pdf)! It presents HDCT, which extends DeepCT to support long documents and weakly-supervised training! 
-
-*Feb 19, 2019*: Data and instructions for HDCT will come soon.
-
-*May 21, 2020*: Rankings generaed by HDCT for MS-MARCO-Doc: [here](http://boston.lti.cs.cmu.edu/appendices/TheWebConf2020-Zhuyun-Dai/rankings/)
+# DeepCT : Context-Aware Term Importance Estimation For First Stage Retrieval
+Reference paper : 
+- arXiv paper "Context-Aware Sentence/Passage Term Weighting For First Stage Retrieval" [arXiv](https://arxiv.org/abs/1910.10687), 2019
 
 Term frequency is a common method for identifying the importance of a term in a query or document. But it is a weak signal. This work proposes a Deep Contextualized Term Weighting framework that learns to map BERT's contextualized text representations to context-aware term weights for sentences and passages. 
 
-- DeepCT is a framwork for sentence/passage term weighting. When applied to **passages**, DeepCT-Index produces term weights that can be stored in an ordinary inverted index for passage retrieval. When applied to **query** text, DeepCT-Query generates a weighted bag-of-words query that emphasizes essential terms in the query. 
-- HDCT extends DeepCT to support long documents. It index **documents** into an ordinary inverted index for retrieval.
-
-<img src="deepct.png" alt="Illustration of DeepCT" width="500"/>
-
+- DeepCT is a framwork for sentence/passage term weighting. When applied to **passages**, DeepCT-Index produces term weights that can be stored in an ordinary inverted index for passage retrieval. When applied to **query** text, DeepCT-Query generates a weighted bag-of-words query that emphasizes essential terms in the query.
 
 ## DATA 1:DeepCT Retrieved Results (Initial Rankings)
 
@@ -26,10 +15,9 @@ We released the top 1000 documents retrieved by DeepCT for the MS MARCO Passage 
 If you want to use the DeepCT-Index weighted MS-MARCO passages (e.g., to build index & run experiments), download them here:
 [Virtual Appendix/weighted_documents](http://boston.lti.cs.cmu.edu/appendices/arXiv2019-DeepCT-Zhuyun-Dai/weighted_documents/)
 
-DeepCT generates a floating-point weight for every term: y_{t,d}. To turn it into an integer TF-like weight, we tested 2 different ways:
+DeepCT generates a floating-point weight for every term: y_{t,d}. To turn it into an integer TF-like weight, we used the below expression:
 
 1. The paper used `TF_{DeepCT}(t, d) = round(y_{t,d} * 100)` (`sample_100_jsonl.zip`)
-2. Later I use `TF_{DeepCT}(t, d) = round(sqrt(y_{t,d}) * 100)` (`sqrt_sample_100_jsonl.zip`). sqrt makes small values highe, e.g., sqrt(0.01)=0.1, so more terms will appear in the document. 
 
 Each line in the json file is the text of a weighted passage. We repeat every word TF_{DeepCT} times, so that these json files can be directly feed into [Anserini](https://github.com/castorini/anserini) to build inverted indexes.
 
@@ -40,11 +28,10 @@ In the paper, we fine-tuned the BM25 parameters (k1, b) for all baselines and De
 - Baseline BM25: k1=0.6, b=0.8
 - DeepCT: k1=10, b=0.9
 - DeepCT-sqrt: k1=18, b=0.7
-- Also see detaills in [issue#2](https://github.com/AdeDZY/DeepCT/issues/2).
 
 
 
-## DATA 3: Other MS MARCO passage ranking task data for reproducing
+## Steps for reproducing
 
 To reproduce DeepCT-Index: The corpus, training files, checkpoints,and predictions can be downloaded from the [Virtual Appendix](http://boston.lti.cs.cmu.edu/appendices/arXiv2019-DeepCT-Zhuyun-Dai/)
 
@@ -64,7 +51,8 @@ The source code uses
 To use the sample training code, copy and decompress `data` in the [Virtual Appendix](http://boston.lti.cs.cmu.edu/appendices/arXiv2019-DeepCT-Zhuyun-Dai/) to the.`./data` under this repo. 
 
 ```
-export BERT_BASE_DIR=/bos/usr0/zhuyund/uncased_L-12_H-768_A-12
+
+export BERT_BASE_DIR=/cs/student/nikunjbaid/cs293s/final_project/uncased_L-12_H-768_A-12
 export TRAIN_DATA_FILE=./data/marco/myalltrain.relevant.docterm_recall
 export OUTPUT_DIR=./output/marco/
 
@@ -102,7 +90,7 @@ python run_deepct.py \
 (You can skip this step. Alternatively, direct download our DeepCT predicted weights for the entire MS MARCO passage ranking corpus, from `prediction` in the [Virtual Appendix](http://boston.lti.cs.cmu.edu/appendices/arXiv2019-DeepCT-Zhuyun-Dai/).)
  
  ```
-export BERT_BASE_DIR=/bos/usr0/zhuyund/uncased_L-12_H-768_A-12
+export BERT_BASE_DIR=/cs/student/nikunjbaid/cs293s/final_project/uncased_L-12_H-768_A-12
 export INIT_CKPT=./output/marco/model.ckpt-65816
 export TEST_DATA_FILE=./data/collection.tsv.1
 export OUTPUT_DIR=./predictions/marco/collection_pred_1/
@@ -161,5 +149,4 @@ optional arguments:
  The output files can be feed to indexing tools such as Anserini (used in paper), Indri, or Lucene to build index and run retrieval.
  Go to the original repository of [Anserini](https://github.com/castorini/anserini)
  
- For retrieval, it is critical to fine-tune the BM25/LM parameters (k1, b, \mu). See detaills in [issue#2](https://github.com/AdeDZY/DeepCT/issues/2).
- 
+ For retrieval, it is critical to fine-tune the BM25/LM parameters (k1, b, \mu).
